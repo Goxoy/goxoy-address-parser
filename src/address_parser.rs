@@ -1,15 +1,15 @@
-#[derive(Clone, Copy, Debug, PartialEq,Eq,Ord,PartialOrd)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub enum IPAddressVersion{
     IpV4,
     IpV6
 }
-#[derive(Clone, Copy, Debug, PartialEq,Eq,Ord,PartialOrd)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub enum ProtocolType{
     TCP,
     UDP
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub struct AddressParser {
     pub ip_address:String,
     pub port_no:usize,
@@ -43,11 +43,56 @@ impl AddressParser {
     pub fn to_string(&self)->String{
         self.convert_string(self.to_object())
     }
-    /*
     pub fn from_string(&self,address_string:String)->AddressParser{
-        //self.convert_string(address_object)
+        let tmp_arr=address_string.split("/");
+        let mut tmp_type=ProtocolType::TCP;
+        let mut tmp_ip_ver=IPAddressVersion::IpV4;
+        let mut tmp_ip_addr=String::from("0.0.0.0");
+        let mut tmp_port_no=usize::MIN;
+        let mut started=false;
+        let mut count=0;
+        for part in tmp_arr {
+            if started==true{
+                if count==0{
+                    tmp_ip_addr=part.to_string();
+                }
+                if count==1{
+                    if part.eq("tcp"){
+                        tmp_type=ProtocolType::TCP;
+                    }
+                    if part.eq("udp"){
+                        tmp_type=ProtocolType::UDP;
+                    }
+                }
+                if count==2{
+                    tmp_port_no=part.parse().unwrap_or_default();
+                }
+                count=count+1;
+            }
+            if part.eq("ipv4"){
+                tmp_ip_ver=IPAddressVersion::IpV4;
+                started=true;
+            }
+            if part.eq("ipv6"){
+                tmp_ip_ver=IPAddressVersion::IpV6;
+                started=true;
+            }
+        }        
+        AddressParser{
+            ip_address:tmp_ip_addr,
+            port_no:tmp_port_no,
+            protocol_type:tmp_type,
+            ip_version:tmp_ip_ver,
+        }
+    }    
+    pub fn convert_to_object(&self,ip_version:IPAddressVersion,ip_address:String,port_no:usize,protocol_type:ProtocolType)->AddressParser{
+        AddressParser{
+            ip_address:ip_address.clone(),
+            port_no:port_no,
+            protocol_type:protocol_type,
+            ip_version:ip_version,
+        }
     }
-    */
     pub fn to_object(&self)->AddressParser{
         AddressParser{
             ip_address:self.ip_address.clone(),
@@ -79,6 +124,14 @@ fn full_test() {
     address_obj.set_protocol(ProtocolType::TCP);
     address_obj.set_ip(String::from("123.456.789.456"));
     let result=address_obj.to_string();
+    let addr_result=address_obj.from_string("/ipv4/123.456.789.456/tcp/1234".to_string());
+    let obj_convert=address_obj.from_string(result.clone());
+    if addr_result.eq(&obj_convert.clone()){
+        println!("esit");
+    }else{
+        println!("farkli");
+    }
+    // 
     println!("{}",result);
     assert_eq!(true,true)
 }
