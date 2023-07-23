@@ -26,7 +26,7 @@ impl AddressParser {
             ip_version:IPAddressVersion::IpV4,
         }
     }
-    pub fn object_to_string(&self,address_object:AddressParser)->String{
+    pub fn object_to_string(address_object:AddressParser)->String{
         let mut result_str=String::from("/ipv4/");
         if address_object.ip_version==IPAddressVersion::IpV6 {
             result_str.push_str("/ipv6/");
@@ -41,9 +41,9 @@ impl AddressParser {
         result_str
     }
     pub fn to_string(&self)->String{
-        self.object_to_string(self.to_object())
+        AddressParser::object_to_string(self.to_object())
     }
-    pub fn string_to_object(&self,address_string:String)->AddressParser{
+    pub fn string_to_object(address_string:String)->AddressParser{
         let tmp_arr=address_string.split("/");
         let mut tmp_type=ProtocolType::TCP;
         let mut tmp_ip_ver=IPAddressVersion::IpV4;
@@ -85,7 +85,7 @@ impl AddressParser {
             ip_version:tmp_ip_ver,
         }
     }    
-    pub fn convert_from_params(&self,ip_version:IPAddressVersion,ip_address:String,port_no:usize,protocol_type:ProtocolType)->AddressParser{
+    pub fn convert_from_params(ip_version:IPAddressVersion,ip_address:String,port_no:usize,protocol_type:ProtocolType)->AddressParser{
         AddressParser{
             ip_address:ip_address.clone(),
             port_no:port_no,
@@ -119,15 +119,14 @@ impl AddressParser {
 fn full_test() {
     // cargo test  --lib full_test -- --nocapture
     
-    let address_obj=AddressParser::new();
-    let addr_obj=address_obj.convert_from_params(
+    let addr_obj=AddressParser::convert_from_params(
         IPAddressVersion::IpV4,
         "127.0.0.1".to_string(),
         1234,
         ProtocolType::TCP
     );
-    let addr_str=address_obj.object_to_string(addr_obj.clone());
-    let convert_obj=address_obj.string_to_object(addr_str.clone());
+    let addr_str=AddressParser::object_to_string(addr_obj.clone());
+    let convert_obj=AddressParser::string_to_object(addr_str.clone());
 
     if addr_obj.eq(&convert_obj.clone()){
         assert_eq!(true,true)
