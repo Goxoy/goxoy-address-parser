@@ -6,7 +6,8 @@ pub enum IPAddressVersion{
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub enum ProtocolType{
     TCP,
-    UDP
+    UDP,
+    WEBSOCKET
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
