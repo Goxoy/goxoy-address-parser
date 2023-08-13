@@ -76,7 +76,7 @@ impl AddressParser {
         }
     }
     pub fn binding_addr_to_object(local_addr:String, protocol_type:ProtocolType, ip_version:IPAddressVersion)->AddressParser{
-        let collection = local_addr.split(".").collect::<Vec<&str>>();
+        let collection = local_addr.split(":").collect::<Vec<&str>>();
         AddressParser{
             ip_address: collection[0].to_string(),
             port_no: collection[1].parse::<usize>().unwrap(),
