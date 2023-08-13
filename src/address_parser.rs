@@ -19,14 +19,6 @@ pub struct AddressParser {
 }
 
 impl AddressParser {
-    pub fn new() -> Self {
-        AddressParser{
-            ip_address:String::new(),
-            port_no:0,
-            protocol_type:ProtocolType::TCP,
-            ip_version:IPAddressVersion::IpV4,
-        }
-    }
     pub fn object_to_string(address_object:AddressParser)->String{
         let mut result_str=String::from("/ipv4/");
         if address_object.ip_version==IPAddressVersion::IpV6 {
@@ -40,9 +32,6 @@ impl AddressParser {
         }
         result_str.push_str(&address_object.port_no.to_string());
         result_str
-    }
-    pub fn to_string(&self)->String{
-        AddressParser::object_to_string(self.to_object())
     }
     pub fn string_to_object(address_string:String)->AddressParser{
         let tmp_arr=address_string.split("/");
@@ -86,33 +75,11 @@ impl AddressParser {
             ip_version:tmp_ip_ver,
         }
     }    
-    pub fn convert_from_params(ip_version:IPAddressVersion,ip_address:String,port_no:usize,protocol_type:ProtocolType)->AddressParser{
-        AddressParser{
-            ip_address:ip_address.clone(),
-            port_no:port_no,
-            protocol_type:protocol_type,
-            ip_version:ip_version,
-        }
-    }
-    pub fn to_object(&self)->AddressParser{
-        AddressParser{
-            ip_address:self.ip_address.clone(),
-            port_no:self.port_no,
-            protocol_type:self.protocol_type,
-            ip_version:self.ip_version,
-        }
-    }
-    pub fn set_ip_version(&mut self,ip_version:IPAddressVersion){
-        self.ip_version=ip_version;
-    }
-    pub fn set_ip(&mut self,ip_address:String){
-        self.ip_address=ip_address;
-    }
-    pub fn set_port(&mut self,port_no:usize){
-        self.port_no=port_no;
-    }
-    pub fn set_protocol(&mut self,protocol_type:ProtocolType){
-        self.protocol_type=protocol_type;
+    pub fn local_addr_for_binding(address_object:AddressParser)->String{
+        let mut bind_str = address_object.ip_address;
+        bind_str.push_str(":");
+        bind_str.push_str(&address_object.port_no.to_string());
+        bind_str
     }
 }
 
@@ -120,13 +87,17 @@ impl AddressParser {
 fn full_test() {
     // cargo test  --lib full_test -- --nocapture
     
-    let addr_obj=AddressParser::convert_from_params(
-        IPAddressVersion::IpV4,
-        "127.0.0.1".to_string(),
-        1234,
-        ProtocolType::TCP
-    );
+    let addr_obj=AddressParser{
+        ip_version: IPAddressVersion::IpV4,
+        ip_address:"127.0.0.1".to_string(),
+        port_no:1234,
+        protocol_type:ProtocolType::TCP
+    };
     let addr_str=AddressParser::object_to_string(addr_obj.clone());
+    
+    //let local_addr_for_socket=AddressParser::local_addr_for_binding(addr_obj.clone());
+    //println!("local_addr_for_socket: {}",local_addr_for_socket.clone());
+
     let convert_obj=AddressParser::string_to_object(addr_str.clone());
 
     if addr_obj.eq(&convert_obj.clone()){
@@ -135,3 +106,4 @@ fn full_test() {
         assert_eq!(false,true)
     }
 }
+
