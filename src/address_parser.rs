@@ -21,6 +21,24 @@ pub struct AddressParser {
     pub ip_version:IPAddressVersion
 }
 
+pub trait AddressParserConverter {
+    fn to_address_parser_object(&self) -> AddressParser;
+}
+impl AddressParserConverter for str {
+    fn to_address_parser_object(&self) -> AddressParser {
+        AddressParser::string_to_object(self.clone().to_string())
+    }
+}
+
+pub trait AddressParserConverterForString {
+    fn to_address_parser_object(&self) -> AddressParser;
+}
+impl AddressParserConverterForString for String {
+    fn to_address_parser_object(&self) -> AddressParser {
+        AddressParser::string_to_object(self.clone())
+    }
+}
+
 impl AddressParser {
     pub fn object_to_string(address_object:AddressParser)->String{
         let mut result_str=String::from("/ipv4/");
