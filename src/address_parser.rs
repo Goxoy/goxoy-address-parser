@@ -1,3 +1,6 @@
+// https://blog.guillaume-gomez.fr/articles/2020-03-12+Guide+on+how+to+write+documentation+for+a+Rust+crate
+//#![warn(missing_docs)]
+#![warn(missing_doc_code_examples)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub enum IPAddressVersion{
     IpV4,
